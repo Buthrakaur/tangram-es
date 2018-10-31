@@ -28,6 +28,8 @@ jobs:
       - checkout
       - run: git submodule update --init
       - run: cd platforms/android && ./gradlew assembleRelease -Ptangram.abis=armeabi-v7a
+      - store_artifacts:
+          path: platforms/android/tangram/build/outputs
   build-deploy-android-snapshot:
     docker:
       - image: circleci/android:api-28-ndk-r17b
