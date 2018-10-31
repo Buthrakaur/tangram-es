@@ -19,6 +19,15 @@ jobs:
       - checkout
       - run: git submodule update --init
       - run: cd platforms/android && ./gradlew demo:assembleDebug -Ptangram.abis=armeabi-v7a
+  build-android-release:
+    docker:
+      - image: circleci/android:api-28-ndk-r17b
+    environment:
+      GRADLE_OPTS: -Xmx2048m
+    steps:
+      - checkout
+      - run: git submodule update --init
+      - run: cd platforms/android && ./gradlew assembleRelease -Ptangram.abis=armeabi-v7a
   build-deploy-android-snapshot:
     docker:
       - image: circleci/android:api-28-ndk-r17b
@@ -112,8 +121,12 @@ workflows:
   build-and-deploy:
     jobs:
       # Run on all pushes
-      - build-test-linux
+      - build-android-release
       # Run on pushes to all branches except master
+      - build-test-linux
+          filters:
+            branches:
+              ignore: master
       - build-android:
           filters:
             branches:
@@ -122,19 +135,18 @@ workflows:
           filters:
             branches:
               ignore: master
-      # Run on pushes to master
       - build-deploy-android-snapshot:
           filters:
             branches:
-              only: master
+              ignore: master
       - build-deploy-macos-snapshot:
           filters:
             branches:
-              only: master
+              ignore: master
       - build-deploy-ios-snapshot:
           filters:
             branches:
-              only: master
+              ignore: master
       # Run on tag pushes
       - build-deploy-ios-release:
           filters:
