@@ -123,7 +123,7 @@ workflows:
       # Run on all pushes
       - build-android-release
       # Run on pushes to all branches except master
-      - build-test-linux
+      - build-test-linux:
           filters:
             branches:
               ignore: master
